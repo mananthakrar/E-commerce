@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VibeStore - Premium Design Collection</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        neutral: {
+                            50: '#fafafa',
+                            100: '#f5f5f5',
+                            200: '#e5e5e5',
+                            300: '#d4d4d4',
+                            400: '#a3a3a3',
+                            500: '#737373',
+                            600: '#525252',
+                            700: '#404040',
+                            800: '#262626',
+                            900: '#171717',
+                            950: '#0a0a0a',
+                        },
+                        accent: {
+                            gold: '#C5A880',
+                            goldDark: '#A38458',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts & Lucide Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Hide scrollbars but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4d4d4;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #404040;
+        }
+        .premium-hover {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        /* Mobile-friendly Bottom Sheet Transitions */
+        @media (max-width: 640px) {
+            .mobile-bottom-sheet {
+                transform: translateY(100%);
+                transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .mobile-bottom-sheet.active {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50 min-h-screen flex flex-col antialiased pb-16 sm:pb-0">
+
+    <!-- Toast Notifications (Responsive alignment) -->
+    <div id="toast-container" class="fixed bottom-20 sm:bottom-6 right-0 sm:right-6 left-0 sm:left-auto z-[100] flex flex-col gap-2 pointer-events-none px-4 sm:px-0 w-full max-w-none sm:max-w-sm"></div>
+
+    <!-- Minimal Premium Navigation Header -->
+    <header class="sticky top-0 z-40 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-md border-b border-neutral-100 dark:border-neutral-900 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+            
+            <!-- Brand Identity -->
+            <a href="#" class="flex items-center gap-2 sm:gap-3 group shrink-0">
+                <div class="bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 px-2 sm:px-3 py-1 rounded-none font-serif font-bold text-base sm:text-lg tracking-wider transition-all duration-300 group-hover:bg-accent-gold dark:group-hover:bg-accent-gold group-hover:text-white">
+                    V
+                </div>
+                <span class="text-lg sm:text-xl font-bold tracking-widest uppercase text-neutral-900 dark:text-white">VibeStore</span>
+            </a>
+
+            <!-- Search Frame (Hidden on smallest, shown on desktop & tablet) -->
+            <div class="hidden sm:flex flex-1 max-w-md relative">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                </span>
+                <input type="text" id="desktop-search" placeholder="Discover curated lifestyle essentials..." 
+                       class="w-full pl-11 pr-4 py-2 border border-neutral-200 dark:border-neutral-800 rounded-none bg-neutral-100/50 dark:bg-neutral-900/50 text-sm focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:focus:ring-white transition-all text-neutral-900 dark:text-neutral-100" />
+            </div>
+
+            <!-- Utility Controls (Icons adapt beautifully) -->
+            <div class="flex items-center gap-1 sm:gap-2">
+                <!-- Theme Toggle -->
+                <button onclick="toggleTheme()" class="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-full transition-colors min-w-[40px] min-h-[40px] flex items-center justify-center" aria-label="Toggle visual theme">
+                    <i data-lucide="sun" id="theme-sun" class="w-5 h-5 text-accent-gold hidden dark:block"></i>
+                    <i data-lucide="moon" id="theme-moon" class="w-5 h-5 text-neutral-600 dark:text-neutral-300 block dark:hidden"></i>
+                </button>
+
+                <!-- Saved Favorites Button -->
+                <button onclick="toggleWishlistModal(true)" class="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-full transition-colors relative min-w-[40px] min-h-[40px] flex items-center justify-center" aria-label="View saved items">
+                    <i data-lucide="bookmark" class="w-5 h-5 text-neutral-700 dark:text-neutral-300"></i>
+                    <span id="wishlist-badge" class="absolute top-1 right-1 bg-accent-gold text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center scale-0 transition-transform duration-300">0</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Search Field (Expands fluidly on smaller viewports) -->
+        <div class="block sm:hidden border-t border-neutral-100 dark:border-neutral-900 px-4 py-2 bg-white dark:bg-neutral-950">
+            <div class="relative w-full">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-neutral-400">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                </span>
+                <input type="text" id="mobile-search" placeholder="Search curated products..." 
+                       class="w-full pl-9 pr-4 py-2 border border-neutral-200 dark:border-neutral-800 rounded-none bg-neutral-100/50 dark:bg-neutral-900/50 text-xs focus:outline-none focus:ring-1 focus:ring-neutral-950 transition-all text-neutral-900 dark:text-neutral-100" />
+            </div>
+        </div>
+    </header>
+
+    <!-- Editorial Showcase Banner -->
+    <section class="relative bg-gradient-to-b from-neutral-100 to-white dark:from-neutral-900/40 dark:to-neutral-950 py-10 md:py-24 border-b border-neutral-200/50 dark:border-neutral-900/50 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            <div class="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-neutral-250 dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 text-[10px] tracking-widest uppercase font-semibold">
+                    <i data-lucide="asterisk" class="w-3.5 h-3.5 text-accent-gold animate-spin"></i> Studio Collection
+                </span>
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-neutral-900 dark:text-white">
+                    Simplicity <span class="serif-title italic font-normal text-accent-gold">Refined.</span><br class="hidden sm:inline">
+                    Lifestyle <span class="serif-title italic font-normal">Reimagined.</span>
+                </h1>
+                <p class="text-xs sm:text-base text-neutral-500 dark:text-neutral-400 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
+                    An exclusive catalog of precision accessories, minimalist home accents, and everyday styling essentials engineered to balance workspace environments.
+                </p>
+                <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                    <a href="#catalog-section" class="w-full sm:w-auto text-center px-8 py-3.5 bg-neutral-950 hover:bg-accent-gold text-white dark:bg-white dark:text-neutral-950 dark:hover:bg-accent-gold dark:hover:text-white text-[11px] font-bold tracking-widest uppercase transition-all duration-300">
+                        Explore Catalog
+                    </a>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 relative max-w-xs sm:max-w-sm lg:max-w-none mx-auto w-full flex justify-center">
+                <div class="relative bg-white dark:bg-neutral-900 p-3 sm:p-4 border border-neutral-200/60 dark:border-neutral-800/60 shadow-xl w-full">
+                    <div class="relative overflow-hidden bg-neutral-100 dark:bg-neutral-850 aspect-[4/3] mb-3 sm:mb-4">
+                        <img id="hero-img" src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=600" alt="Featured Acoustic Over-Ear Headphones" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105" onerror="this.src='https://placehold.co/600x450/171717/ffffff?text=Premium+Collection'">
+                        <span class="absolute top-3 left-3 bg-neutral-950 text-white text-[8px] font-bold tracking-widest uppercase px-2 py-0.5">Editor's Choice</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-[9px] uppercase font-bold tracking-wider text-accent-gold">Electronics</span>
+                            <h3 class="font-bold text-xs sm:text-sm text-neutral-900 dark:text-white">Acoustic Over-Ear Pro</h3>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-neutral-400 line-through block">$179.99</span>
+                            <span class="text-sm sm:text-base font-bold text-neutral-950 dark:text-neutral-50">$129.99</span>
+                        </div>
+                    </div>
+                    <button onclick="openQuickView(1)" class="w-full mt-3 sm:mt-4 py-2.5 sm:py-3 bg-neutral-100 hover:bg-neutral-900 hover:text-white dark:bg-neutral-800 dark:hover:bg-white dark:hover:text-neutral-950 text-neutral-900 dark:text-white text-[9px] tracking-widest uppercase font-bold transition-all flex items-center justify-center gap-1.5">
+                        <i data-lucide="eye" class="w-3.5 h-3.5"></i> Inspect Details
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Catalog Showcase Workspace -->
+    <main id="catalog-section" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 w-full">
+        
+        <!-- Premium Section Header -->
+        <div class="text-center sm:text-left mb-6 sm:mb-10 space-y-1">
+            <h2 class="text-[10px] sm:text-xs uppercase tracking-widest font-bold text-accent-gold">Curated Inventory</h2>
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-2">
+                <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">Discover Design Standards</h3>
+                <span class="text-xs font-medium text-neutral-500 dark:text-neutral-400">
+                    Displaying <span id="products-count" class="font-bold text-neutral-900 dark:text-white">0</span> designs
+                </span>
+            </div>
+        </div>
+
+        <!-- Tab Categories Filtering & Sorting Bar -->
+        <div class="flex flex-col gap-4 sm:gap-6 mb-8 border-b border-neutral-200/60 dark:border-neutral-800/60 pb-4 sm:pb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                
+                <!-- Tab Controls (Horizontal scroll for mobile viewports) -->
+                <div class="overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <div class="flex items-center gap-1.5 min-w-max pb-1" id="category-tabs-container">
+                        <!-- Populated dynamically via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Catalog Sorting Control -->
+                <div class="flex items-center justify-between sm:justify-end gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-neutral-200 dark:border-neutral-850">
+                    <label for="sort-by" class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-neutral-400">Sort By:</label>
+                    <select id="sort-by" onchange="applyFiltersAndSort()"
+                            class="border border-neutral-250 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-accent-gold text-neutral-700 dark:text-neutral-300">
+                        <option value="featured">Featured Collection</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="rating">Top Customer Rated</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Catalog Grid: Highly responsive, compact grid on mobile layout -->
+        <div id="products-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+            <!-- Dynamic cards injected via Javascript -->
+        </div>
+
+        <!-- Empty Filter State Container -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-16 px-4 text-center bg-white dark:bg-neutral-900 border border-neutral-150 dark:border-neutral-850">
+            <div class="bg-neutral-50 dark:bg-neutral-850 p-4 rounded-full text-neutral-400 mb-3">
+                <i data-lucide="compass" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-sm sm:text-base font-bold text-neutral-900 dark:text-white">Item query unfulfilled</h3>
+            <p class="text-neutral-400 text-xs mt-1 max-w-xs mx-auto font-light">
+                No designs match this specified configuration.
+            </p>
+            <button onclick="resetFilters()" class="mt-6 px-6 py-2.5 bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 font-semibold text-xs tracking-wider uppercase">
+                Restore Catalogue
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Saved Collection Wishlist Modal (Transforms into Bottom Sheet on mobile) -->
+    <div id="wishlist-modal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-neutral-950/40 dark:bg-neutral-950/70 backdrop-blur-xs transition-opacity" onclick="toggleWishlistModal(false)"></div>
+        
+        <div class="flex min-h-full items-end sm:items-center justify-center p-0 sm:p-4">
+            <div id="wishlist-sheet" class="mobile-bottom-sheet relative transform overflow-hidden bg-white dark:bg-neutral-900 text-left shadow-2xl transition-all w-full max-w-md border-t sm:border border-neutral-200 dark:border-neutral-800 flex flex-col max-h-[85vh] sm:max-h-[80vh] rounded-t-2xl sm:rounded-none">
+                
+                <!-- Swipe indicator handle for mobile viewports -->
+                <div class="w-12 h-1.5 bg-neutral-300 dark:bg-neutral-700 rounded-full mx-auto my-3 sm:hidden shrink-0"></div>
+
+                <div class="px-5 pb-4 sm:py-5 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+                    <h3 class="text-xs sm:text-sm font-bold tracking-widest uppercase text-neutral-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="bookmark" class="w-4 h-4 text-accent-gold"></i> Saved Collection
+                    </h3>
+                    <button onclick="toggleWishlistModal(false)" class="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition-colors text-neutral-400">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                <div id="wishlist-items-container" class="flex-grow overflow-y-auto p-4 sm:p-6 space-y-3">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Editorial Product Specification Details Modal (Transforms into Bottom Sheet on mobile) -->
+    <div id="quickview-modal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-neutral-950/40 dark:bg-neutral-950/70 backdrop-blur-xs transition-opacity" onclick="closeQuickView()"></div>
+        
+        <div class="flex min-h-full items-end sm:items-center justify-center p-0 sm:p-4">
+            <div id="quickview-sheet" class="mobile-bottom-sheet relative transform overflow-hidden bg-white dark:bg-neutral-900 text-left shadow-2xl transition-all w-full max-w-2xl border-t sm:border border-neutral-250 dark:border-neutral-800 rounded-t-2xl sm:rounded-none max-h-[90vh] sm:max-h-none overflow-y-auto sm:overflow-visible">
+                
+                <!-- Swipe indicator handle for mobile -->
+                <div class="w-12 h-1.5 bg-neutral-300 dark:bg-neutral-700 rounded-full mx-auto my-3 sm:hidden shrink-0"></div>
+
+                <button onclick="closeQuickView()" class="absolute top-4 right-4 z-10 p-2 bg-white/90 dark:bg-neutral-900/90 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition-colors text-neutral-500 dark:text-neutral-400 hidden sm:block">
+                    <i data-lucide="x" class="w-4.5 h-4.5"></i>
+                </button>
+
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-5 sm:gap-6 p-5 sm:p-8">
+                    <!-- Close action for mobile viewports inside standard layout header -->
+                    <div class="sm:hidden flex items-center justify-between pb-2 border-b border-neutral-100 dark:border-neutral-800">
+                        <span id="qv-category-mob" class="text-[9px] font-bold text-accent-gold uppercase tracking-widest">CATEGORY</span>
+                        <button onclick="closeQuickView()" class="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition-colors text-neutral-400">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
+                    <!-- Image Showcase -->
+                    <div class="sm:col-span-6 aspect-square sm:aspect-auto sm:h-full bg-neutral-100 dark:bg-neutral-850 overflow-hidden relative">
+                        <img id="qv-image" src="" alt="Selected Product Feature" class="w-full h-full object-cover">
+                        <span id="qv-tag" class="absolute top-3 left-3 bg-neutral-950 text-white text-[8px] font-bold tracking-widest uppercase px-2 py-0.5">NEW</span>
+                    </div>
+
+                    <!-- Description Meta Block -->
+                    <div class="sm:col-span-6 flex flex-col justify-between space-y-4">
+                        <div class="space-y-2 sm:space-y-3">
+                            <span id="qv-category" class="hidden sm:inline-block text-[9px] font-bold text-accent-gold uppercase tracking-widest">CATEGORY</span>
+                            <h3 id="qv-title" class="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white leading-snug">Product Title</h3>
+                            
+                            <div class="flex items-center gap-1 text-neutral-400 text-xs">
+                                <div class="flex" id="qv-stars-container"></div>
+                                <span id="qv-rating-value" class="font-bold text-neutral-800 dark:text-neutral-200 ml-1">0.0</span>
+                            </div>
+
+                            <p id="qv-description" class="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed font-light"></p>
+                        </div>
+
+                        <div class="space-y-4 pt-4 border-t border-neutral-150 dark:border-neutral-800">
+                            <div class="flex items-baseline gap-2">
+                                <span id="qv-price" class="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white">$0.00</span>
+                                <span id="qv-old-price" class="text-xs text-neutral-400 line-through font-medium">$0.00</span>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button id="qv-fav-btn" class="flex-1 py-3 border border-neutral-900 dark:border-white hover:bg-neutral-900 hover:text-white dark:hover:bg-white dark:hover:text-neutral-950 transition-all text-neutral-900 dark:text-white text-[10px] tracking-widest uppercase font-bold flex items-center justify-center gap-2 min-h-[44px]">
+                                    <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> Save To Collection
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Editorial Minimal Footer -->
+    <footer class="bg-neutral-100 dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-900/60 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start">
+                
+                <div class="md:col-span-6 space-y-3">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 px-2.5 py-1 text-sm font-serif font-bold">V</div>
+                        <span class="text-sm font-bold tracking-widest uppercase">VibeStore</span>
+                    </div>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 max-w-sm leading-relaxed font-light">
+                        A pristine visual portfolio catalog indexing signature accessories, interior objects, and organic daily coordinates crafted for modern design enthusiasts.
+                    </p>
+                </div>
+
+                <div class="md:col-span-3 space-y-2">
+                    <h4 class="text-[10px] uppercase tracking-widest font-bold text-accent-gold">Direct Filtering</h4>
+                    <ul class="space-y-1 text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+                        <li><button onclick="filterByTab('Electronics')" class="hover:text-accent-gold transition-colors">Electronics</button></li>
+                        <li><button onclick="filterByTab('Accessories')" class="hover:text-accent-gold transition-colors">Accessories</button></li>
+                        <li><button onclick="filterByTab('Fashion')" class="hover:text-accent-gold transition-colors">Fashion</button></li>
+                        <li><button onclick="filterByTab('Home & Living')" class="hover:text-accent-gold transition-colors">Home & Living</button></li>
+                    </ul>
+                </div>
+
+                <div class="md:col-span-3 space-y-2">
+                    <h4 class="text-[10px] uppercase tracking-widest font-bold text-accent-gold">Showcase Architecture</h4>
+                    <p class="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed font-light">
+                        Built using Tailwind CSS, standard ES6 dynamic maps, and responsive, touch-friendly UI design principles.
+                    </p>
+                </div>
+            </div>
+
+            <div class="border-t border-neutral-200 dark:border-neutral-900 mt-6 pt-6 flex flex-col sm:flex-row items-center justify-between text-[10px] text-neutral-400 gap-3">
+                <p>&copy; 2026 VibeStore Portfolio Catalog. Designed for visual luxury.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-neutral-600 dark:hover:text-white transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-neutral-600 dark:hover:text-white transition-colors">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Dedicated Mobile Bottom Navigation (Only visible on smallest devices) -->
+    <nav class="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-neutral-950/90 border-t border-neutral-200 dark:border-neutral-900 backdrop-blur-md flex justify-around items-center h-16 px-4">
+        <a href="#catalog-section" class="flex flex-col items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
+            <i data-lucide="layout-grid" class="w-5 h-5"></i>
+            <span class="text-[9px] mt-1 font-bold uppercase tracking-wider">Catalog</span>
+        </a>
+        <button onclick="focusMobileSearch()" class="flex flex-col items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
+            <i data-lucide="search" class="w-5 h-5"></i>
+            <span class="text-[9px] mt-1 font-bold uppercase tracking-wider">Search</span>
+        </button>
+        <button onclick="toggleWishlistModal(true)" class="flex flex-col items-center justify-center relative text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
+            <i data-lucide="bookmark" class="w-5 h-5"></i>
+            <span id="mobile-wishlist-badge" class="absolute -top-1 -right-2 bg-accent-gold text-white text-[8px] font-bold h-4.5 w-4.5 rounded-full flex items-center justify-center scale-0 transition-transform duration-300">0</span>
+            <span class="text-[9px] mt-1 font-bold uppercase tracking-wider">Saved</span>
+        </button>
+        <button onclick="toggleTheme()" class="flex flex-col items-center justify-center text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors">
+            <i data-lucide="sun" class="w-5 h-5 dark:hidden"></i>
+            <i data-lucide="moon" class="w-5 h-5 hidden dark:block text-accent-gold"></i>
+            <span class="text-[9px] mt-1 font-bold uppercase tracking-wider">Theme</span>
+        </button>
+    </nav>
+
+    <script>
+        // Curated inventory
+        const PRODUCTS = [
+            {
+                id: 1,
+                title: "Acoustic Over-Ear Pro",
+                category: "Electronics",
+                price: 129.99,
+                oldPrice: 179.99,
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=500",
+                description: "Features custom active acoustic noise cancelation layers, brushed space aluminum headband plates, plush high density memory leather ear covers, and premium 45-hour audio wireless life support.",
+                tag: "Bestseller"
+            },
+            {
+                id: 2,
+                title: "Minimalist Classic Chrono",
+                category: "Accessories",
+                price: 89.00,
+                oldPrice: 120.00,
+                rating: 4.7,
+                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=500",
+                description: "Handcrafted top-grain Italian leather band with a classic brushed silver alloy steel dial casing, Japanese Miyota quartz movement, and 50M depth water resistance.",
+                tag: "Trending"
+            },
+            {
+                id: 3,
+                title: "VibeSmart Fitness Band",
+                category: "Electronics",
+                price: 49.99,
+                oldPrice: 69.99,
+                rating: 4.5,
+                image: "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?auto=format&fit=crop&q=80&w=500",
+                description: "Slim sensory band engineered to monitor resting heart metrics, active daily strides, deep sleep indexes, and subtle dynamic notifications inside a clean OLED screen capsule.",
+                tag: "Essential"
+            },
+            {
+                id: 4,
+                title: "Signature Cotton Hoodie",
+                category: "Fashion",
+                price: 59.99,
+                oldPrice: 79.99,
+                rating: 4.8,
+                image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=500",
+                description: "Spun from 400GSM organic heavyweight combed cotton featuring reinforced loop stitching, dropped shoulder patterns, and custom powder-coated cord tips.",
+                tag: "Limited Release"
+            },
+            {
+                id: 5,
+                title: "Ergonomic Lumbar Cushion",
+                category: "Home & Living",
+                price: 34.50,
+                oldPrice: 45.00,
+                rating: 4.6,
+                image: "https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&q=80&w=500",
+                description: "Therapeutic contoured slow-rebound core designed to align the human lumbar system, complete with a breathable mesh cover engineered for professional task chairs.",
+                tag: "Studio"
+            },
+            {
+                id: 6,
+                title: "Triple-Insulated Steel Flask",
+                category: "Accessories",
+                price: 24.99,
+                oldPrice: 32.00,
+                rating: 4.9,
+                image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&q=80&w=500",
+                description: "Forged in pro-grade 18/8 stainless steel featuring dynamic double-wall copper vacuum insulation layers, locking inside elements cold for 36 hours and warm for up to 18.",
+                tag: "Eco-Friendly"
+            },
+            {
+                id: 7,
+                title: "Artisan Ceramic Vase Duo",
+                category: "Home & Living",
+                price: 42.00,
+                oldPrice: 55.00,
+                rating: 4.4,
+                image: "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&q=80&w=500",
+                description: "A dual pairing of wheel-thrown textured earthenware, featuring organic hand-applied glazes, ideal for containing natural botanical stems on premium study tables.",
+                tag: "Artisan"
+            },
+            {
+                id: 8,
+                title: "Active-Stretch Joggers",
+                category: "Fashion",
+                price: 45.00,
+                oldPrice: 60.00,
+                rating: 4.7,
+                image: "https://images.unsplash.com/photo-1506152983158-b4a74a01c721?auto=format&fit=crop&q=80&w=500",
+                description: "Tailored comfortable athletic stretch trousers featuring high structural breathability, reinforced waistband systems, and discrete internal security card pockets.",
+                tag: "Clean Styling"
+            }
+        ];
+
+        // Global state module
+        let state = {
+            wishlist: [],
+            filters: {
+                search: "",
+                category: "All",
+                sortBy: "featured"
+            },
+            selectedQvProduct: null
+        };
+
+        // Initialize state
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                const cachedWishlist = localStorage.getItem('vibe_wishlist');
+                const cachedTheme = localStorage.getItem('vibe_theme');
+
+                if (cachedWishlist) state.wishlist = JSON.parse(cachedWishlist);
+                
+                if (cachedTheme === 'dark' || (!cachedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (err) {
+                console.error("Cache buffer parse failure:", err);
+            }
+
+            renderCategoryTabs();
+            applyFiltersAndSort();
+            renderWishlist();
+            setupSearchHandlers();
+            lucide.createIcons();
+        });
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('vibe_theme', isDark ? 'dark' : 'light');
+        }
+
+        function focusMobileSearch() {
+            const mobInput = document.getElementById('mobile-search');
+            mobInput.focus();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Beautiful Visual Toast Alerts
+        function triggerToast(message, type = "info") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            let icon = '<i data-lucide="info" class="w-4 h-4 text-neutral-500"></i>';
+            if (type === "success") icon = '<i data-lucide="check" class="w-4 h-4 text-accent-gold"></i>';
+            if (type === "wishlist") icon = '<i data-lucide="bookmark" class="w-4 h-4 text-accent-gold"></i>';
+            if (type === "error") icon = '<i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>';
+
+            toast.className = `flex items-center gap-3 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-850 px-4 py-3 shadow-lg pointer-events-auto transform translate-y-3 opacity-0 transition-all duration-300 w-full border-l-4 ${type === 'error' ? 'border-l-red-500' : 'border-l-accent-gold'}`;
+            toast.innerHTML = `
+                <div class="shrink-0">${icon}</div>
+                <div class="text-[10px] sm:text-[11px] uppercase tracking-wider font-semibold text-neutral-700 dark:text-neutral-200">${message}</div>
+                <button class="ml-auto text-neutral-400 hover:text-neutral-600" onclick="this.parentElement.remove()">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                </button>
+            `;
+            
+            container.appendChild(toast);
+            lucide.createIcons({attrs: {"stroke-width": 2}});
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-3', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 350);
+            }, 3000);
+        }
+
+        // Render elegant horizontal categories
+        function renderCategoryTabs() {
+            const categories = ["All", ...new Set(PRODUCTS.map(p => p.category))];
+            const container = document.getElementById('category-tabs-container');
+            
+            container.innerHTML = categories.map(cat => {
+                const active = state.filters.category === cat;
+                return `
+                    <button onclick="filterByTab('${cat}')"
+                            class="px-4 sm:px-5 py-2 text-[10px] sm:text-xs tracking-widest uppercase font-bold transition-all duration-300 ${
+                                active 
+                                ? 'bg-neutral-950 text-white dark:bg-white dark:text-neutral-950 shadow-md' 
+                                : 'bg-transparent text-neutral-500 hover:text-neutral-950 dark:hover:text-white border border-transparent hover:border-neutral-200 dark:hover:border-neutral-800'
+                            }">
+                        ${cat}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function filterByTab(category) {
+            state.filters.category = category;
+            renderCategoryTabs();
+            applyFiltersAndSort();
+        }
+
+        function setupSearchHandlers() {
+            const deskInput = document.getElementById('desktop-search');
+            const mobInput = document.getElementById('mobile-search');
+
+            const applySearchVal = (e) => {
+                state.filters.search = e.target.value.toLowerCase().trim();
+                deskInput.value = e.target.value;
+                mobInput.value = e.target.value;
+                applyFiltersAndSort();
+            };
+
+            deskInput.addEventListener('input', applySearchVal);
+            mobInput.addEventListener('input', applySearchVal);
+        }
+
+        function applyFiltersAndSort() {
+            let filtered = PRODUCTS.filter(prod => {
+                const matchCategory = state.filters.category === "All" || prod.category === state.filters.category;
+                const matchSearch = !state.filters.search || 
+                                    prod.title.toLowerCase().includes(state.filters.search) || 
+                                    prod.category.toLowerCase().includes(state.filters.search);
+                return matchCategory && matchSearch;
+            });
+
+            if (state.filters.sortBy === "price-low") {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (state.filters.sortBy === "price-high") {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (state.filters.sortBy === "rating") {
+                filtered.sort((a, b) => b.rating - a.rating);
+            } else {
+                filtered.sort((a, b) => a.id - b.id);
+            }
+
+            renderProductsGrid(filtered);
+        }
+
+        function renderProductsGrid(items) {
+            const grid = document.getElementById('products-grid');
+            const emptyState = document.getElementById('empty-state');
+            document.getElementById('products-count').textContent = items.length;
+
+            if (items.length === 0) {
+                grid.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+            grid.classList.remove('hidden');
+
+            grid.innerHTML = items.map(prod => {
+                const saved = state.wishlist.includes(prod.id);
+                const banner = prod.tag ? `
+                    <span class="absolute top-2 left-2 sm:top-3 sm:left-3 bg-neutral-900/90 text-white text-[7px] sm:text-[8px] font-bold tracking-widest uppercase px-1.5 sm:px-2 py-0.5 z-10">
+                        ${prod.tag}
+                    </span>
+                ` : '';
+
+                return `
+                    <div class="group relative bg-white dark:bg-neutral-900 border border-neutral-200/60 dark:border-neutral-800/60 rounded-none overflow-hidden transition-all duration-350 hover:shadow-lg flex flex-col h-full premium-hover">
+                        <div class="relative aspect-square overflow-hidden bg-neutral-100 dark:bg-neutral-850">
+                            <img src="${prod.image}" alt="${prod.title}" 
+                                 class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                                 onerror="this.src='https://placehold.co/500x500/171717/ffffff?text=${encodeURIComponent(prod.title)}'">
+                            
+                            ${banner}
+
+                            <!-- Premium Action Triggers (Adaptive for Mobile Tap / Desktop Hover) -->
+                            <div class="absolute top-2 right-2 sm:top-3 sm:right-3 flex flex-col gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 z-10">
+                                <button onclick="toggleWishlist(${prod.id})" 
+                                        class="p-2 bg-white/90 dark:bg-neutral-950/90 hover:bg-accent-gold hover:text-white border border-neutral-150 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 shadow transition-colors min-w-[34px] min-h-[34px] flex items-center justify-center">
+                                    <i data-lucide="bookmark" class="w-4 h-4 ${saved ? 'fill-accent-gold text-accent-gold' : ''}"></i>
+                                </button>
+                                <button onclick="openQuickView(${prod.id})" 
+                                        class="p-2 bg-white/90 dark:bg-neutral-950/90 hover:bg-neutral-900 hover:text-white dark:hover:bg-white dark:hover:text-neutral-950 border border-neutral-150 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 shadow transition-colors min-w-[34px] min-h-[34px] flex items-center justify-center">
+                                    <i data-lucide="eye" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Card Product Details -->
+                        <div class="p-3 sm:p-5 flex flex-col flex-grow justify-between gap-3 border-t border-neutral-100 dark:border-neutral-850/60">
+                            <div class="space-y-1">
+                                <span class="text-[8px] sm:text-[9px] font-bold tracking-widest uppercase text-accent-gold">${prod.category}</span>
+                                <h3 class="font-bold text-xs sm:text-sm text-neutral-900 dark:text-white tracking-wide line-clamp-1">${prod.title}</h3>
+                                <div class="flex items-center gap-1 text-neutral-400 text-[9px] sm:text-[10px]">
+                                    <div class="flex gap-0.5">${getStarsHTML(prod.rating)}</div>
+                                    <span class="font-bold text-neutral-700 dark:text-neutral-300 ml-1">${prod.rating}</span>
+                                </div>
+                            </div>
+
+                            <!-- Pricing Matrix & Primary Direct CTA -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-850/60">
+                                <div class="flex flex-col">
+                                    ${prod.oldPrice ? `<span class="text-neutral-400 line-through text-[9px] sm:text-[10px] font-medium">$${prod.oldPrice.toFixed(2)}</span>` : ''}
+                                    <span class="text-xs sm:text-sm font-bold text-neutral-950 dark:text-neutral-50">$${prod.price.toFixed(2)}</span>
+                                </div>
+                                <button onclick="openQuickView(${prod.id})" 
+                                        class="w-full sm:w-auto text-center border border-neutral-950 dark:border-neutral-700 hover:bg-neutral-950 dark:hover:bg-white dark:hover:text-neutral-950 hover:text-white px-2.5 py-1.5 text-[8px] sm:text-[9px] tracking-widest uppercase font-bold transition-all">
+                                    Inspect
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons({attrs: {"stroke-width": 2}});
+        }
+
+        function getStarsHTML(rating) {
+            let code = "";
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.floor(rating)) {
+                    code += `<i data-lucide="star" class="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-accent-gold text-accent-gold"></i>`;
+                } else if (i - 0.5 <= rating) {
+                    code += `<i data-lucide="star" class="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-accent-gold opacity-50 text-accent-gold"></i>`;
+                } else {
+                    code += `<i data-lucide="star" class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-neutral-300 dark:text-neutral-700"></i>`;
+                }
+            }
+            return code;
+        }
+
+        function resetFilters() {
+            state.filters.search = "";
+            state.filters.category = "All";
+            state.filters.sortBy = "featured";
+
+            document.getElementById('desktop-search').value = "";
+            document.getElementById('mobile-search').value = "";
+            document.getElementById('sort-by').value = "featured";
+
+            renderCategoryTabs();
+            applyFiltersAndSort();
+            triggerToast("Catalogue scope restored", "success");
+        }
+
+        // Bookmark / Saved Collection Controls
+        function toggleWishlist(productId) {
+            const index = state.wishlist.indexOf(productId);
+            const product = PRODUCTS.find(p => p.id === productId);
+
+            if (index > -1) {
+                state.wishlist.splice(index, 1);
+                triggerToast(`"${product.title}" removed from collection`, "error");
+            } else {
+                state.wishlist.push(productId);
+                triggerToast(`"${product.title}" saved to collection`, "wishlist");
+            }
+
+            localStorage.setItem('vibe_wishlist', JSON.stringify(state.wishlist));
+            renderWishlist();
+            applyFiltersAndSort(); 
+        }
+
+        function toggleWishlistModal(open) {
+            const modal = document.getElementById('wishlist-modal');
+            const sheet = document.getElementById('wishlist-sheet');
+            if (open) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                renderWishlist();
+                setTimeout(() => sheet.classList.add('active'), 50);
+            } else {
+                sheet.classList.remove('active');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+        }
+
+        function renderWishlist() {
+            const container = document.getElementById('wishlist-items-container');
+            const badge = document.getElementById('wishlist-badge');
+            const mobileBadge = document.getElementById('mobile-wishlist-badge');
+
+            // Update badge counters
+            const updateBadge = (el) => {
+                if (el) {
+                    if (state.wishlist.length > 0) {
+                        el.textContent = state.wishlist.length;
+                        el.classList.remove('scale-0');
+                        el.classList.add('scale-100');
+                    } else {
+                        el.classList.remove('scale-100');
+                        el.classList.add('scale-0');
+                    }
+                }
+            };
+
+            updateBadge(badge);
+            updateBadge(mobileBadge);
+
+            if (state.wishlist.length === 0) {
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center text-center py-12">
+                        <div class="p-3 bg-neutral-100 dark:bg-neutral-850 text-neutral-400 rounded-full mb-3">
+                            <i data-lucide="bookmark" class="w-6 h-6 text-accent-gold"></i>
+                        </div>
+                        <h4 class="font-semibold text-xs tracking-wider uppercase text-neutral-500">Collection is empty</h4>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = state.wishlist.map(id => {
+                const prod = PRODUCTS.find(p => p.id === id);
+                if (!prod) return '';
+
+                return `
+                    <div class="flex items-center gap-4 justify-between p-3 bg-neutral-50 dark:bg-neutral-850 border border-neutral-200/60 dark:border-neutral-800">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 overflow-hidden bg-neutral-100 shrink-0">
+                                <img src="${prod.image}" alt="${prod.title}" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-xs text-neutral-900 dark:text-white line-clamp-1">${prod.title}</h4>
+                                <span class="text-[9px] font-bold text-accent-gold tracking-wide uppercase">${prod.category}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-neutral-700 dark:text-neutral-300">$${prod.price.toFixed(2)}</span>
+                            <button onclick="toggleWishlist(${prod.id})" class="p-1 text-neutral-400 hover:text-red-500 transition-colors">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // Quick View Panel Controls
+        function openQuickView(id) {
+            const prod = PRODUCTS.find(p => p.id === id);
+            if (!prod) return;
+
+            state.selectedQvProduct = prod;
+
+            document.getElementById('qv-image').src = prod.image;
+            document.getElementById('qv-title').textContent = prod.title;
+            document.getElementById('qv-category').textContent = prod.category;
+            document.getElementById('qv-category-mob').textContent = prod.category;
+            document.getElementById('qv-rating-value').textContent = prod.rating;
+            document.getElementById('qv-description').textContent = prod.description;
+            document.getElementById('qv-price').textContent = `$${prod.price.toFixed(2)}`;
+            
+            if (prod.oldPrice) {
+                document.getElementById('qv-old-price').textContent = `$${prod.oldPrice.toFixed(2)}`;
+                document.getElementById('qv-old-price').classList.remove('hidden');
+            } else {
+                document.getElementById('qv-old-price').classList.add('hidden');
+            }
+
+            document.getElementById('qv-stars-container').innerHTML = getStarsHTML(prod.rating);
+
+            // Set button state
+            const saved = state.wishlist.includes(prod.id);
+            const favBtn = document.getElementById('qv-fav-btn');
+            favBtn.innerHTML = `<i data-lucide="bookmark" class="w-4 h-4 ${saved ? 'fill-accent-gold' : ''}"></i> ${saved ? 'Saved In Collection' : 'Save To Collection'}`;
+            favBtn.onclick = () => {
+                toggleWishlist(prod.id);
+                closeQuickView();
+            };
+
+            const modal = document.getElementById('quickview-modal');
+            const sheet = document.getElementById('quickview-sheet');
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => sheet.classList.add('active'), 50);
+
+            lucide.createIcons();
+        }
+
+        function closeQuickView() {
+            const modal = document.getElementById('quickview-modal');
+            const sheet = document.getElementById('quickview-sheet');
+            
+            sheet.classList.remove('active');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+                state.selectedQvProduct = null;
+            }, 300);
+        }
+    </script>
+</body>
+</html>
